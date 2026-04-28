@@ -188,7 +188,7 @@ export default function App() {
         ? [
             { role: 'user', content: user },
             { role: 'assistant', content: analysisRaw },
-            { role: 'user', content: `Refine the analysis based on this feedback: ${feedback}\n\nReturn the same VALUE / CRUX / RISK format. Do not repeat the previous wording.` }
+            { role: 'user', content: `Refine the analysis based on this feedback: ${feedback}\n\nReturn the same VALUE / CRUX / RISK format. Address me directly in second person ("you", "your") — never "the user" or "they". Do not repeat the previous wording.` }
           ]
         : [{ role: 'user', content: user }]
 
@@ -498,7 +498,7 @@ function Step2({
   return (
     <div className="step-card">
       <div className="step-eyebrow">Step 02 / Options</div>
-      <h1 className="step-title">Name the moves on the table.</h1>
+      <h1 className="step-title">What are the options on the table?</h1>
       <p className="step-sub">2 to 5 options. Be concrete — "do X" not "explore Y".</p>
 
       <div className="field">
@@ -522,7 +522,7 @@ function Step2({
 
       <div className="field">
         <button className="link-btn" onClick={onSurface} disabled={cleanOptions.length < 2 || loading}>
-          {loading ? '…' : missingOption ? '↻ Surface another →' : 'Surface what I missed →'}
+          {loading ? '…' : missingOption ? '↻ Surface another option →' : 'Surface what I missed →'}
         </button>
       </div>
 
@@ -567,8 +567,8 @@ function Step3({
   return (
     <div className="step-card">
       <div className="step-eyebrow">Step 03 / Factors</div>
-      <h1 className="step-title">The factors driving your decision.</h1>
-      <p className="step-sub">Based on what you shared, here are four key factors. You can edit names, keep the ones you like, or regenerate new factors with feedback.</p>
+      <h1 className="step-title">What are the factors driving your decision?</h1>
+      <p className="step-sub">You can edit each, or keep the ones you like and regenerate new factors with feedback.</p>
 
       {loading && dimensions.length === 0 && (
         <AIBlock tag="Proposing"><Loading /></AIBlock>

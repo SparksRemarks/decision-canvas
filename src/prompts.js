@@ -76,25 +76,32 @@ export function analysisPrompt({ decision, context, options, dimensions, ranked,
   const rankList = ranked.map((r, i) => `${i + 1}. ${r.name} — ${r.score}`).join('\n')
   const actualTop = ranked[0]?.name
   const gapLine = predictedTop && actualTop && predictedTop !== actualTop
-    ? `\n\nNOTE: The user predicted "${predictedTop}" would rank highest. The numbers ranked "${actualTop}" first. The gap between prediction and result is itself a signal — surface it in your VALUE line if relevant.`
+    ? `\n\nNOTE: You predicted "${predictedTop}" would rank highest. The numbers ranked "${actualTop}" first. The gap between your prediction and the result is itself a signal — surface it in your VALUE line if it's load-bearing.`
     : predictedTop && predictedTop === actualTop
-    ? `\n\nNOTE: The user correctly predicted "${actualTop}" would rank highest. Their gut and the numbers agree.`
+    ? `\n\nNOTE: You correctly predicted "${actualTop}" would rank highest. Your gut and the numbers agree.`
     : ''
 
   return {
-    system: `You give a 3-sentence analysis of a decision the user has just scored. Output EXACTLY this format, three lines, each starting with the label:
+    system: `You give a 3-sentence analysis of a decision someone has just scored.
 
-VALUE: [what they're actually optimizing for, based on which dimensions and ratings drove the top option — name it directly. Not what they SAID matters; what the numbers show matters.]
-CRUX: [the single load-bearing assumption of the top-ranked option — what has to be true for this to be the right call.]
-RISK: [the most plausible failure mode of the top option — the way this goes wrong.]
+VOICE — non-negotiable:
+- Speak DIRECTLY to the person using second person: "you", "your", "you're".
+- NEVER write "the user", "they", "their", "the founder", "the person", or any third-person reference.
+- You're talking to them, not about them.
 
-Each line: one sentence, starting with the all-caps label and a colon. No preamble. No closing remarks. No bullets. No markdown.`,
+Output EXACTLY this format — three lines, each starting with the all-caps label and a colon:
+
+VALUE: [what you're actually optimizing for, based on which factors and ratings drove your top option — name it directly. Not what you SAID matters; what the numbers show matters.]
+CRUX: [the single load-bearing assumption of your top-ranked option — what has to be true for this to be the right call.]
+RISK: [the most plausible failure mode of your top option — the way this goes wrong for you.]
+
+One sentence per line. No preamble. No closing remarks. No bullets. No markdown.`,
     user: `Decision: ${decision}${context ? `\n\nContext: ${context}` : ''}
 
 Options:
 ${options.map((o, i) => `${i + 1}. ${o}`).join('\n')}
 
-Dimensions (all scored 1-5, higher is better): ${dimensions.map(d => d.name).join(', ')}
+Factors (all scored 1-5, higher is better): ${dimensions.map(d => d.name).join(', ')}
 
 Ratings:
 ${ratingTable}

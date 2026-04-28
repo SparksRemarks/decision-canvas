@@ -81,6 +81,12 @@ input, textarea {
 input:focus, textarea:focus { border-color: var(--gold); }
 textarea { resize: vertical; min-height: 96px; }
 
+input::placeholder,
+textarea::placeholder {
+  color: var(--fg);
+  opacity: 0.55;
+}
+
 .app {
   max-width: 760px;
   margin: 0 auto;

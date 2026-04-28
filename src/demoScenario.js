@@ -1,39 +1,49 @@
 // Pre-loaded fallback scenario for the live demo. Lets Chris skip Steps 1-3
 // straight to the ratings reveal if API calls are flaky on stage.
+//
+// Tuned for Series A SaaS founders: $1-5M ARR, high margin, near break-even,
+// 15-30 employees, 9-18 months runway. The scenario is designed to produce
+// a strong prediction-vs-actual surprise: the founder's gut says "go upmarket"
+// but the numbers reveal that the bottleneck is actually founder time, and
+// "hire a VP of Sales" wins by quietly dominating every factor.
 
 export const DEMO_SCENARIO = {
   decision:
-    "Should we expand to enterprise clients, raise prices on our current SMB base, or hire a sales lead to scale what's already working?",
+    "We just hit $3M ARR. SMB customers love us but growth is slowing. Do we move upmarket to mid-market, hire a VP of Sales to scale what's working, or raise a Series B and scale across the board?",
 
   context:
-    "We have 18 months of runway. Current SMB customers are happy but churn slowly on price increases. Two enterprise leads have come inbound but neither is qualified yet.",
+    "$3M ARR, 78% gross margin, growing 8% MoM but decelerating. 22 employees. 14 months of runway at current burn. Two senior reps drove ~60% of last quarter's revenue. CEO is still doing top-of-funnel. Three Series B firms have reached out unsolicited.",
 
   framing:
-    "You're deciding whether to change WHO you sell to, what you charge them, or who does the selling. The core tension is that each path solves a different bottleneck — and you can only commit to one without diluting all three.",
+    "You're choosing between scaling by going upmarket, scaling by hiring a leader, or scaling by raising more capital. The core tension is that each path solves a different bottleneck — and each one resets a different clock you can't unstart.",
 
   options: [
-    'Expand to enterprise clients',
-    'Raise prices on current SMB base',
-    'Hire a senior sales lead'
+    'Move upmarket to mid-market deals',
+    'Hire a VP of Sales to systematize the motion',
+    'Raise a Series B and scale broadly'
   ],
 
   missingOption:
-    "Productize the current motion — package the SMB offering tightly enough that it sells itself without a new segment, new pricing, or new headcount.",
+    "Productize the founder-led motion — extract the playbook your two senior reps already use into something repeatable, before hiring above them or moving upmarket.",
 
-  predictedTopId: 1, // user predicts "Expand to enterprise" will win
+  // Founder predicts "Move upmarket" — biggest TAM, sexiest narrative.
+  // The numbers will say "Hire a VP of Sales" wins. That's the demo moment.
+  predictedTopId: 1,
 
   dimensions: [
-    { name: 'Speed to revenue' },
+    { name: 'Capital efficiency' },
     { name: 'Founder leverage' },
-    { name: 'Strategic optionality' },
-    { name: 'Execution safety' }
+    { name: 'Compounding distribution' },
+    { name: 'Reversibility' }
   ],
 
-  // ratings keyed by option id (matches options array index + 1)
-  // 1 = low, 5 = high. All dimensions are framed so 5 is best.
+  // All factors framed so 5 = best.
+  // Designed so option 2 (VP of Sales) wins clearly, option 1 (upmarket) is
+  // a high-ceiling but low-floor surprise runner-up, and option 3 (raise) is
+  // last because of dilution + burn-rate spike + irreversibility.
   ratings: {
-    1: { 0: 2, 1: 2, 2: 5, 3: 2 }, // Enterprise: slow, drains founder, opens doors, risky
-    2: { 0: 5, 1: 4, 2: 2, 3: 4 }, // Raise prices: fast, low founder cost, low optionality, safe
-    3: { 0: 3, 1: 5, 2: 4, 3: 3 }  // Sales lead: medium speed, frees founder, builds capability, hiring risk
+    1: { 0: 2, 1: 2, 2: 4, 3: 2 }, // Move upmarket: 4+4+16+4 = 28
+    2: { 0: 4, 1: 5, 2: 4, 3: 4 }, // Hire VP of Sales: 16+25+16+16 = 73
+    3: { 0: 1, 1: 3, 2: 3, 3: 1 }  // Raise Series B: 1+9+9+1 = 20
   }
 }
