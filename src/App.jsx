@@ -12,7 +12,7 @@ import {
   parseAnalysis
 } from './prompts.js'
 
-const STEP_LABELS = ['Decision', 'Options', 'Dimensions', 'Ratings', 'Analysis']
+const STEP_LABELS = ['Decision', 'Options', 'Factors', 'Ratings', 'Analysis']
 
 async function callClaude({ system, user, messages, max_tokens = 600 }) {
   const body = {
@@ -290,18 +290,33 @@ export default function App() {
     <div className="app">
       <div className="header">
         <div className="brand">
-          <CubeLogo size={28} />
+          <CubeLogo size={26} />
           <div className="brand-text">
             <strong>Forcing Function</strong> · EV Calculator
           </div>
         </div>
-        <button
-          className="theme-toggle"
-          onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-          aria-label="toggle theme"
-        >
-          {theme === 'dark' ? '☾  Dark' : '☀  Light'}
-        </button>
+        <div className="header-actions">
+          <button
+            className="theme-toggle"
+            onClick={() => {
+              if (step > 1 || decision || framing) {
+                if (!confirm('Reset everything and start over?')) return
+              }
+              reset()
+            }}
+            aria-label="reset"
+            title="Start over"
+          >
+            ↻ Reset
+          </button>
+          <button
+            className="theme-toggle"
+            onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+            aria-label="toggle theme"
+          >
+            {theme === 'dark' ? '☾' : '☀'}
+          </button>
+        </div>
       </div>
 
       <div className="progress" role="progressbar" aria-valuenow={step} aria-valuemin={1} aria-valuemax={5}>
@@ -315,7 +330,7 @@ export default function App() {
         ))}
       </div>
 
-      <div style={{ height: 32 }} />
+      <div style={{ height: 16 }} />
 
       {error && <div className="error">⚠ {error}</div>}
 
@@ -551,9 +566,9 @@ function Step3({
 
   return (
     <div className="step-card">
-      <div className="step-eyebrow">Step 03 / Dimensions</div>
-      <h1 className="step-title">What actually matters here?</h1>
-      <p className="step-sub">Four dimensions, tuned to this decision. All scored 1–5; higher is always better.</p>
+      <div className="step-eyebrow">Step 03 / Factors</div>
+      <h1 className="step-title">The factors driving your decision.</h1>
+      <p className="step-sub">Based on what you shared, here are four key factors. You can edit names, keep the ones you like, or regenerate new factors with feedback.</p>
 
       {loading && dimensions.length === 0 && (
         <AIBlock tag="Proposing"><Loading /></AIBlock>
@@ -593,13 +608,13 @@ function Step3({
           <div style={{ display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap' }}>
             <button onClick={onRegen} disabled={loading}>
               {loading ? <Loading /> : keptCount === 0
-                ? '↻ Regenerate all'
+                ? '↻ Regenerate all factors'
                 : `↻ Regenerate ${willReplace} unchecked`}
             </button>
             <span className="hint" style={{ marginTop: 0 }}>
               {keptCount > 0
                 ? `Keeping ${keptCount}, replacing ${willReplace}`
-                : 'Check the dimensions you want to keep'}
+                : 'Check the factors you want to keep'}
             </span>
           </div>
         </>
@@ -613,7 +628,7 @@ function Step4({ options, dimensions, ratings, setRating }) {
     <div className="step-card">
       <div className="step-eyebrow">Step 04 / Ratings</div>
       <h1 className="step-title">Score each option, 1 to 5.</h1>
-      <p className="step-sub">5 = best on this dimension. Sliders default to 3 — move them.</p>
+      <p className="step-sub">5 = best on this factor. Sliders default to 3 — move them.</p>
 
       <div className="rate-table">
         {options.map(o => (
@@ -636,7 +651,7 @@ function Step4({ options, dimensions, ratings, setRating }) {
                         className="rate-slider"
                       />
                       <div className="slider-ticks">
-                        <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span>
+                        <span>1 low</span><span>5 high</span>
                       </div>
                     </div>
                     <div className="slider-value">{value}</div>
