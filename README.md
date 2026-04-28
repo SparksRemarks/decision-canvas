@@ -6,10 +6,20 @@ and gap-filling, not generation. Built for a 7-minute live demo.
 ## Quickstart
 
 ```bash
+./start.sh
+```
+
+First run: creates `.env`, prompts you to paste your `ANTHROPIC_API_KEY`, exits.
+Second run (and every run after): boots on http://localhost:5173.
+
+The script never overwrites an existing `.env`, so your key persists between
+sessions. You can close the terminal and re-run `./start.sh` any time.
+
+Manual equivalent if you prefer:
+```bash
 npm install
-cp .env.example .env          # add your ANTHROPIC_API_KEY
-npm run dev                   # boots Express proxy + Vite
-# open http://localhost:5173
+cp .env.example .env          # ONE TIME ONLY — paste your key, then never re-run this
+npm run dev
 ```
 
 `npm run dev` runs two processes:
