@@ -410,6 +410,10 @@ export default function App() {
           <button className="ghost" onClick={reset}>Start over</button>
         )}
       </div>
+
+      <footer className="footer">
+        Inputs are sent to Anthropic for processing. Not stored by us.
+      </footer>
     </div>
   )
 }

@@ -578,6 +578,18 @@ textarea::placeholder {
 
 .divider { height: 1px; background: var(--rule); margin: 24px 0; }
 
+.footer {
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid var(--rule);
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--fg-faint);
+  text-align: center;
+  letter-spacing: 0.04em;
+  line-height: 1.5;
+}
+
 @media (max-width: 600px) {
   .app { padding: 24px 16px 64px; }
   .step-card { padding: 24px 18px; }
