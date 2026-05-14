@@ -30,10 +30,11 @@ async function callClaude({ system, user, messages, max_tokens = 600 }) {
   return data.text
 }
 
+const DEFAULT_RATING = 3
+
 function totalScore(option, dimensions, ratings) {
   return dimensions.reduce((sum, _, di) => {
-    const r = ratings?.[option.id]?.[di]
-    if (r == null) return sum
+    const r = ratings?.[option.id]?.[di] ?? DEFAULT_RATING
     return sum + r * r
   }, 0)
 }
@@ -178,7 +179,7 @@ export default function App() {
           option: o.name,
           scores: dimensions.map((d, di) => ({
             dim: d.name,
-            rating: ratings?.[o.id]?.[di] ?? null
+            rating: ratings?.[o.id]?.[di] ?? DEFAULT_RATING
           }))
         })),
         predictedTop: predictedTopName
@@ -640,7 +641,7 @@ function Step4({ options, dimensions, ratings, setRating }) {
             <div className="rate-option-name">{o.name}</div>
             <div className="rate-grid">
               {dimensions.map((d, di) => {
-                const value = ratings?.[o.id]?.[di] ?? 3
+                const value = ratings?.[o.id]?.[di] ?? DEFAULT_RATING
                 return (
                   <div key={di} className="rate-dim-row">
                     <div className="rate-dim-label">{d.name}</div>
