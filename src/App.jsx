@@ -225,6 +225,18 @@ export default function App() {
 
   const back = () => { if (step > 1) setStep(step - 1) }
 
+  const downloadPDF = () => {
+    const stamp = new Date().toISOString().slice(0, 10)
+    const original = document.title
+    document.title = `Decision Analysis — ${stamp}`
+    const restore = () => {
+      document.title = original
+      window.removeEventListener('afterprint', restore)
+    }
+    window.addEventListener('afterprint', restore)
+    window.print()
+  }
+
   const loadDemo = () => {
     setDecision(DEMO_SCENARIO.decision)
     setContextText(DEMO_SCENARIO.context)
@@ -289,7 +301,7 @@ export default function App() {
 
   return (
     <div className="app">
-      <div className="header">
+      <div className="header no-print">
         <div className="brand">
           <CubeLogo size={26} />
           <div className="brand-text">
@@ -320,12 +332,12 @@ export default function App() {
         </div>
       </div>
 
-      <div className="progress" role="progressbar" aria-valuenow={step} aria-valuemin={1} aria-valuemax={5}>
+      <div className="progress no-print" role="progressbar" aria-valuenow={step} aria-valuemin={1} aria-valuemax={5}>
         {[1, 2, 3, 4, 5].map(n => (
           <div key={n} className={`progress-seg ${n <= step ? 'active' : ''}`} />
         ))}
       </div>
-      <div className="progress-labels">
+      <div className="progress-labels no-print">
         {STEP_LABELS.map((label, i) => (
           <span key={label} className={i + 1 === step ? 'current' : ''}>{label}</span>
         ))}
@@ -398,10 +410,26 @@ export default function App() {
           analysisFeedback={analysisFeedback}
           setAnalysisFeedback={setAnalysisFeedback}
           onRegen={() => submitAnalysis(analysisFeedback)}
+          onDownload={downloadPDF}
         />
       )}
 
-      <div className="actions">
+      {step === 5 && analysis && (
+        <PrintDoc
+          decision={decision}
+          context={contextText}
+          framing={framing}
+          options={cleanOptions}
+          missingOption={missingOption}
+          predictedTopId={predictedTopId}
+          dimensions={dimensions}
+          ratings={ratings}
+          ranked={ranked}
+          analysis={analysis}
+        />
+      )}
+
+      <div className="actions no-print">
         <button className="ghost" onClick={back} disabled={step === 1}>← Back</button>
         {step < 5 ? (
           <button className="primary" onClick={advance} disabled={advanceDisabled}>
@@ -412,7 +440,7 @@ export default function App() {
         )}
       </div>
 
-      <footer className="footer">
+      <footer className="footer no-print">
         Inputs are sent to Anthropic for processing. Not stored by us.
       </footer>
     </div>
@@ -677,7 +705,7 @@ function Step5({
   ranked, predictedTopId,
   analysis, loading,
   analysisFeedback, setAnalysisFeedback,
-  onRegen
+  onRegen, onDownload
 }) {
   const actualTop = ranked[0]
   const predictedTop = ranked.find(r => r.id === predictedTopId)
@@ -730,14 +758,153 @@ function Step5({
               placeholder="e.g. push harder on the founder-time crux, or consider what changes in 12 months..."
               style={{ minHeight: 60 }}
             />
-            <div style={{ marginTop: 8 }}>
+            <div style={{ marginTop: 8, display: 'flex', gap: 12, flexWrap: 'wrap' }}>
               <button onClick={onRegen} disabled={loading}>
                 {loading ? <Loading /> : '↻ Regenerate analysis'}
               </button>
+              <button className="primary" onClick={onDownload} disabled={loading}>
+                ↓ Download PDF
+              </button>
             </div>
+            <div className="hint">The PDF opens in your browser's print dialog — pick "Save as PDF" as the destination.</div>
           </div>
         </div>
       )}
+    </div>
+  )
+}
+
+function PrintDoc({
+  decision, context, framing,
+  options, missingOption, predictedTopId,
+  dimensions, ratings, ranked, analysis
+}) {
+  const stamp = new Date().toLocaleDateString(undefined, {
+    year: 'numeric', month: 'long', day: 'numeric'
+  })
+  const predictedName = options.find(o => o.id === predictedTopId)?.name
+  const winner = ranked[0]
+  const surprised = predictedName && winner && predictedName !== winner.name
+
+  return (
+    <div className="print-only print-doc">
+      <header className="print-header">
+        <div className="print-brand">
+          <CubeLogo size={22} />
+          <div>
+            <div className="print-brand-name">Forcing Function</div>
+            <div className="print-brand-sub">Decision Stress-Test</div>
+          </div>
+        </div>
+        <div className="print-date">{stamp}</div>
+      </header>
+
+      <section className="print-section">
+        <div className="print-label">Decision</div>
+        <div className="print-decision">{decision}</div>
+
+        {context && (
+          <>
+            <div className="print-label" style={{ marginTop: 14 }}>Context</div>
+            <div className="print-body">{context}</div>
+          </>
+        )}
+
+        {framing && (
+          <>
+            <div className="print-label" style={{ marginTop: 14 }}>Framing</div>
+            <div className="print-framing">{framing}</div>
+          </>
+        )}
+      </section>
+
+      <section className="print-section">
+        <div className="print-label">Options Considered</div>
+        <ol className="print-options">
+          {options.map(o => (
+            <li key={o.id}>
+              {o.name}
+              {o.id === predictedTopId && <span className="print-tag"> · predicted winner</span>}
+            </li>
+          ))}
+        </ol>
+
+        {missingOption && (
+          <>
+            <div className="print-label" style={{ marginTop: 12 }}>One you didn't name</div>
+            <div className="print-framing">{missingOption}</div>
+          </>
+        )}
+      </section>
+
+      <section className="print-section">
+        <div className="print-label">Factors &amp; Ratings</div>
+        <table className="print-ratings">
+          <thead>
+            <tr>
+              <th></th>
+              {dimensions.map((d, i) => (
+                <th key={i}>{d.name}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {options.map(o => (
+              <tr key={o.id}>
+                <td className="print-ratings-name">{o.name}</td>
+                {dimensions.map((_, di) => (
+                  <td key={di} className="print-ratings-cell">
+                    {ratings?.[o.id]?.[di] ?? DEFAULT_RATING}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        <div className="print-hint">Rated 1 (low) to 5 (high). Score = sum of rating².</div>
+      </section>
+
+      <section className="print-section">
+        <div className="print-label">Results</div>
+        {surprised && (
+          <div className="print-surprise">
+            You predicted <em>{predictedName}</em> would win. The numbers ranked <em>{winner.name}</em> first.
+          </div>
+        )}
+        <ol className="print-ranking">
+          {ranked.map((r, i) => (
+            <li key={r.id} className={i === 0 ? 'print-ranking-top' : ''}>
+              <span className="print-ranking-name">
+                {r.name}
+                {r.id === predictedTopId && <span className="print-tag"> · your pick</span>}
+              </span>
+              <span className="print-ranking-score">{r.score}</span>
+            </li>
+          ))}
+        </ol>
+      </section>
+
+      {analysis && (
+        <section className="print-section">
+          <div className="print-label">Analysis</div>
+          <div className="print-analysis-row">
+            <div className="print-analysis-tag">Value</div>
+            <div className="print-analysis-text">{analysis.value}</div>
+          </div>
+          <div className="print-analysis-row">
+            <div className="print-analysis-tag">Crux</div>
+            <div className="print-analysis-text">{analysis.crux}</div>
+          </div>
+          <div className="print-analysis-row">
+            <div className="print-analysis-tag">Risk</div>
+            <div className="print-analysis-text">{analysis.risk}</div>
+          </div>
+        </section>
+      )}
+
+      <footer className="print-footer">
+        Generated by the Forcing Function EV Calculator · forcingfunction.com
+      </footer>
     </div>
   )
 }

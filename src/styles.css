@@ -598,3 +598,262 @@ textarea::placeholder {
   .rate-dim-row .slider-wrap { grid-column: 1 / -1; }
   .progress-labels { font-size: 8px; letter-spacing: 0.08em; }
 }
+
+/* ============================================
+   Print — Download PDF flow
+   ============================================
+   .print-only is hidden on screen. On print we hide the entire app UI
+   (marked .no-print or .step-card / .error / .ai-block) and show ONLY
+   the print doc. Colors are forced to a light on-white palette so the
+   PDF prints cleanly on paper too. */
+
+.print-only { display: none; }
+
+@media print {
+  @page {
+    size: letter;
+    margin: 0.55in 0.6in;
+  }
+
+  html, body, #root, .app {
+    background: #fff !important;
+    color: #1A1815 !important;
+    max-width: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    min-height: 0 !important;
+  }
+
+  .no-print,
+  .step-card,
+  .error,
+  .ai-block { display: none !important; }
+
+  .print-only { display: block !important; }
+
+  .print-doc {
+    font-family: 'DM Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 10.5pt;
+    line-height: 1.5;
+    color: #1A1815;
+  }
+
+  .print-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #1A1815;
+    margin-bottom: 20px;
+  }
+  .print-brand {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    color: #1A1815;
+  }
+  .print-brand svg { color: #1A1815; }
+  .print-brand-name {
+    font-family: 'DM Mono', monospace;
+    font-size: 11pt;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+  }
+  .print-brand-sub {
+    font-family: 'DM Mono', monospace;
+    font-size: 8.5pt;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #6b6560;
+    margin-top: 2px;
+  }
+  .print-date {
+    font-family: 'DM Mono', monospace;
+    font-size: 9pt;
+    color: #6b6560;
+    letter-spacing: 0.04em;
+  }
+
+  .print-section {
+    margin-bottom: 22px;
+    page-break-inside: avoid;
+  }
+
+  .print-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 8pt;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: #8B6618;
+    margin-bottom: 8px;
+  }
+
+  .print-decision {
+    font-family: 'Instrument Serif', Georgia, serif;
+    font-size: 19pt;
+    line-height: 1.25;
+    color: #1A1815;
+  }
+
+  .print-body {
+    font-family: 'DM Mono', monospace;
+    font-size: 10.5pt;
+    line-height: 1.55;
+    color: #1A1815;
+  }
+
+  .print-framing {
+    font-family: 'Instrument Serif', Georgia, serif;
+    font-style: italic;
+    font-size: 13pt;
+    line-height: 1.4;
+    color: #1A1815;
+    border-left: 2px solid #8B6618;
+    padding: 4px 0 4px 12px;
+    margin: 6px 0;
+  }
+
+  .print-options {
+    margin: 0;
+    padding-left: 20px;
+    font-family: 'DM Mono', monospace;
+    font-size: 10.5pt;
+    line-height: 1.6;
+  }
+  .print-options li { margin-bottom: 3px; }
+
+  .print-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 8pt;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #8B6618;
+  }
+
+  .print-ratings {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: 'DM Mono', monospace;
+    font-size: 9.5pt;
+    margin: 4px 0 6px;
+  }
+  .print-ratings th,
+  .print-ratings td {
+    padding: 7px 8px;
+    text-align: center;
+    border-bottom: 1px solid #d8d4cf;
+  }
+  .print-ratings th {
+    font-weight: 500;
+    font-size: 8.5pt;
+    letter-spacing: 0.06em;
+    color: #6b6560;
+    border-bottom: 1px solid #1A1815;
+    text-transform: none;
+  }
+  .print-ratings th:first-child,
+  .print-ratings td:first-child {
+    text-align: left;
+  }
+  .print-ratings-name {
+    font-size: 10pt;
+    color: #1A1815;
+    padding-right: 12px !important;
+    max-width: 220px;
+  }
+  .print-ratings-cell {
+    font-family: 'Instrument Serif', Georgia, serif;
+    font-size: 13pt;
+    color: #1A1815;
+  }
+
+  .print-hint {
+    font-family: 'DM Mono', monospace;
+    font-size: 8.5pt;
+    color: #6b6560;
+    margin-top: 4px;
+    letter-spacing: 0.02em;
+  }
+
+  .print-surprise {
+    font-family: 'Instrument Serif', Georgia, serif;
+    font-style: italic;
+    font-size: 12pt;
+    color: #8B6618;
+    margin-bottom: 10px;
+    line-height: 1.4;
+  }
+
+  .print-ranking {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    counter-reset: rank;
+  }
+  .print-ranking li {
+    counter-increment: rank;
+    display: grid;
+    grid-template-columns: 24px 1fr auto;
+    align-items: baseline;
+    gap: 12px;
+    padding: 8px 10px;
+    border-bottom: 1px solid #d8d4cf;
+  }
+  .print-ranking li:first-child { border-top: 1px solid #1A1815; }
+  .print-ranking li:last-child { border-bottom: 1px solid #1A1815; }
+  .print-ranking li::before {
+    content: counter(rank);
+    font-family: 'Instrument Serif', Georgia, serif;
+    font-size: 15pt;
+    color: #8B6618;
+    text-align: center;
+  }
+  .print-ranking-top { background: #f4ecd8; }
+  .print-ranking-name {
+    font-family: 'DM Mono', monospace;
+    font-size: 10.5pt;
+    color: #1A1815;
+  }
+  .print-ranking-score {
+    font-family: 'Instrument Serif', Georgia, serif;
+    font-size: 15pt;
+    color: #1A1815;
+    text-align: right;
+    min-width: 40px;
+  }
+
+  .print-analysis-row {
+    display: grid;
+    grid-template-columns: 70px 1fr;
+    gap: 14px;
+    padding: 10px 0;
+    border-top: 1px solid #d8d4cf;
+    align-items: baseline;
+  }
+  .print-analysis-row:last-child { border-bottom: 1px solid #d8d4cf; }
+  .print-analysis-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 8pt;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: #8B6618;
+  }
+  .print-analysis-text {
+    font-family: 'Instrument Serif', Georgia, serif;
+    font-style: italic;
+    font-size: 12.5pt;
+    line-height: 1.45;
+    color: #1A1815;
+  }
+
+  .print-footer {
+    margin-top: 26px;
+    padding-top: 10px;
+    border-top: 1px solid #d8d4cf;
+    font-family: 'DM Mono', monospace;
+    font-size: 8pt;
+    letter-spacing: 0.1em;
+    color: #6b6560;
+    text-align: center;
+  }
+}
