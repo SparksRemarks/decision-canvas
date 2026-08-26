@@ -636,15 +636,24 @@ textarea::placeholder {
     font-size: 10.5pt;
     line-height: 1.5;
     color: #1A1815;
+    orphans: 3;
+    widows: 3;
+  }
+
+  /* Force reliable 2-page layout: page 1 = decision/context/framing/options,
+     page 2 = factors, results, analysis, footer. Even with 6+ options,
+     page 1 has room; page 2 is tightly spaced so the footer always fits. */
+  .print-doc > section:nth-of-type(3) {
+    page-break-before: always;
   }
 
   .print-header {
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
-    padding-bottom: 12px;
+    padding-bottom: 10px;
     border-bottom: 1px solid #1A1815;
-    margin-bottom: 20px;
+    margin-bottom: 16px;
   }
   .print-brand {
     display: flex;
@@ -675,7 +684,11 @@ textarea::placeholder {
   }
 
   .print-section {
-    margin-bottom: 22px;
+    margin-bottom: 18px;
+  }
+  /* Only the "small" sections that MUST stay together avoid breaking */
+  .print-doc > section:nth-of-type(1),
+  .print-doc > section:nth-of-type(2) {
     page-break-inside: avoid;
   }
 
@@ -690,8 +703,8 @@ textarea::placeholder {
 
   .print-decision {
     font-family: 'Instrument Serif', Georgia, serif;
-    font-size: 19pt;
-    line-height: 1.25;
+    font-size: 18pt;
+    line-height: 1.22;
     color: #1A1815;
   }
 
@@ -715,12 +728,12 @@ textarea::placeholder {
 
   .print-options {
     margin: 0;
-    padding-left: 20px;
+    padding-left: 26px;
     font-family: 'DM Mono', monospace;
     font-size: 10.5pt;
-    line-height: 1.6;
+    line-height: 1.55;
   }
-  .print-options li { margin-bottom: 3px; }
+  .print-options li { margin-bottom: 2px; padding-left: 2px; }
 
   .print-tag {
     font-family: 'DM Mono', monospace;
@@ -739,7 +752,7 @@ textarea::placeholder {
   }
   .print-ratings th,
   .print-ratings td {
-    padding: 7px 8px;
+    padding: 6px 6px;
     text-align: center;
     border-bottom: 1px solid #d8d4cf;
   }
@@ -796,7 +809,7 @@ textarea::placeholder {
     grid-template-columns: 24px 1fr auto;
     align-items: baseline;
     gap: 12px;
-    padding: 8px 10px;
+    padding: 6px 10px;
     border-bottom: 1px solid #d8d4cf;
   }
   .print-ranking li:first-child { border-top: 1px solid #1A1815; }
@@ -826,7 +839,7 @@ textarea::placeholder {
     display: grid;
     grid-template-columns: 70px 1fr;
     gap: 14px;
-    padding: 10px 0;
+    padding: 8px 0;
     border-top: 1px solid #d8d4cf;
     align-items: baseline;
   }
@@ -847,7 +860,7 @@ textarea::placeholder {
   }
 
   .print-footer {
-    margin-top: 26px;
+    margin-top: 16px;
     padding-top: 10px;
     border-top: 1px solid #d8d4cf;
     font-family: 'DM Mono', monospace;
@@ -855,5 +868,6 @@ textarea::placeholder {
     letter-spacing: 0.1em;
     color: #6b6560;
     text-align: center;
+    page-break-before: avoid;
   }
 }
